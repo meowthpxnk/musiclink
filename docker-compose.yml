@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  musiclink:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: musiclink
+    ports:
+      - "8000:8000"
+    volumes:
+      # Монтируем папку tracks, чтобы можно было добавлять треки без пересборки
+      - ./tracks:/app/tracks
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1

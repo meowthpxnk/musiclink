@@ -1,0 +1,32 @@
+global_platforms:
+  telegram_channel: https://t.me/meowthpxnk_eblxn
+  vk: https://vk.com/meowthpxnk_girls_clxb
+  twitch: https://www.twitch.tv/meowthpxnk
+  youtube: https://www.youtube.com/@meowthpxnk4394
+
+tracks:
+  - id: posledniy_tanec
+    title: Последний танец
+    platforms:
+      vk: https://vk.com/music/album/-2000017957_23017957_d796ab54a74cf22738
+      yandex_music: https://music.yandex.ru/album/35028432/track/135299462?utm_source=web&utm_medium=copy_link
+      spotify: https://open.spotify.com/track/4fnRTRsRfLkcHjXTgvUEhC
+      apple_music: https://music.apple.com/nl/album/%D0%BF%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%BD%D0%B8%D0%B9-%D1%82%D0%B0%D0%BD%D0%B5%D1%86-single/1790909347
+      youtube_music: https://music.youtube.com/playlist?list=OLAK5uy_kP7_KzcLguhUBTvgkjHDxW-N3NM8-i-24&si=Nl3isxweaoZLN9Pd
+
+  - id: holodno
+    title: Холодно
+    platforms:
+      vk: https://vk.com/music/album/-2000574369_26574369_1b704da5dd4b6bb2b4
+      yandex_music: https://music.yandex.ru/album/40438550/track/147703310?utm_source=web&utm_medium=copy_link
+      apple_music: https://music.apple.com/nl/album/%D1%85%D0%BE%D0%BB%D0%BE%D0%B4%D0%BD%D0%BE-single/1872783665
+      youtube_music: https://music.youtube.com/playlist?list=OLAK5uy_mf5FeCl4FrAX_myhjL295T1QbNV3YD_Oo&si=s2JRLwVBumSZpOj3
+
+  # - id: svinya
+  #   title: Свинья
+  #   platforms:
+  #     vk: https://example.com/track.mp3
+  #     yandex_music: https://example.com/track.mp3
+  #     spotify: https://example.com/track.mp3
+  #     apple_music: https://example.com/track.mp3
+  #     youtube_music: https://example.com/track.mp3

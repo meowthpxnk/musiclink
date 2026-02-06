@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ru" class="theme-toneden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ track.title }} - {{ track.artist }}</title>
+    <meta property="og:title" content="{{ track.title }}">
+    <meta property="og:description" content="{{ track.description or track.title }}">
+    <meta property="og:image" content="{{ track.cover_url }}">
+    <meta property="og:type" content="music.song">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .link-view {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        .link-wrap-bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .link-wrap-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(20px);
+            transform: scale(1.1);
+        }
+
+        .link-wrap-bg.no-cover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .link-wrap-bg-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .link-wrap {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 40px;
+        }
+
+        .link-main {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .link-body {
+            display: flex;
+            justify-content: center;
+        }
+
+        .link-container-wrap {
+            width: 100%;
+            min-width: 300px;
+            /* max-width: 700px; */
+        }
+
+        .link-container {
+            background: rgba(20, 20, 20, 0.9);
+            border-radius: 0;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .link-container-body {
+            padding: 0;
+        }
+
+        .link-cover-wrap {
+            padding: 0;
+        }
+
+        .link-cover {
+            text-align: center;
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .link-cover::before {
+            content: '';
+            display: block;
+            padding-top: 100%;
+        }
+
+        .link-cover img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .link-cover-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #2a2a2a;
+            border: 2px solid #444;
+            color: #888;
+            font-size: 2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .link-header {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .link-header-music {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .link-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+            line-height: 1.3;
+            letter-spacing: -0.02em;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .link-artist {
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0;
+            letter-spacing: 0.01em;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .link-description {
+            font-size: 0.95rem;
+            color: #aaa;
+            margin-top: 15px;
+            line-height: 1.6;
+        }
+
+        .link-actions {
+            padding: 0;
+            text-align: center;
+        }
+
+        .platform-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            align-items: stretch;
+            margin-bottom: 0;
+        }
+
+        .platform-button {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            padding: 12px 20px;
+            border-radius: 0;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.9rem;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            border: 2px solid transparent;
+            width: 100%;
+            height: auto;
+            min-height: 60px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .platform-button svg {
+            width: auto;
+            height: 40px;
+            flex-shrink: 0;
+            filter: brightness(0) invert(1);
+        }
+
+        .platform-button img {
+            width: auto;
+            height: 40px;
+            flex-shrink: 0;
+            filter: brightness(0) invert(1);
+        }
+
+        .platform-button-text {
+            flex: 1;
+            text-align: left;
+        }
+
+        .platform-button {
+            background: transparent;
+            color: #fff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .platform-button:first-child {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .platform-button:last-child {
+            border-bottom: none;
+        }
+
+        .platform-button:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+
+
+        .back-link {
+            display: inline-block;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #fff;
+        }
+
+        .footer {
+            position: relative;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            pointer-events: auto;
+        }
+
+        .social-icon {
+            width: 24px;
+            height: 24px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+            cursor: pointer;
+        }
+
+        .social-icon:hover {
+            opacity: 1;
+        }
+
+        .social-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: #fff;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .center {
+            justify-content: center;
+        }
+
+        .middle {
+            align-items: center;
+        }
+
+        .top {
+            align-items: flex-start;
+        }
+
+        @media (max-width: 600px) {
+            .link-cover-wrap {
+                padding: 0;
+            }
+
+            .link-header {
+                padding: 20px !important;
+            }
+
+            .link-actions {
+                padding: 0;
+            }
+
+            .link-title {
+                font-size: 1.5rem;
+            }
+
+            .link-artist {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="theme-toneden">
+    <div class="link-view music-view">
+        <div class="link-wrap-bg-layer">
+            {% if track.has_cover %}
+            <div class="link-wrap-bg" style="background-image: url('{{ track.cover_url }}');">
+                <div class="link-wrap-bg-top"></div>
+            </div>
+            {% else %}
+            <div class="link-wrap-bg no-cover">
+                <div class="link-wrap-bg-top"></div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="link-wrap">
+            <div class="link-main">
+                <div class="row center top">
+                    <div class="link-body">
+                        <div class="link-container-wrap">
+                            <div class="link-container">
+                                <div class="link-container-body">
+                                    <div class="row middle link-cover-wrap">
+                                        <div class="link-cover">
+                                            {% if track.has_cover %}
+                                            <img src="{{ track.cover_url }}" alt="{{ track.title }}">
+                                            {% else %}
+                                            <div class="link-cover-placeholder">TBD</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <div class="link-header link-header-music">
+                                        <h1 class="link-title">{{ track.title }}</h1>
+                                        <div class="link-artist">{{ track.artist }}</div>
+                                    </div>
+
+                                    <div class="link-actions">
+                                        <div class="platform-buttons">
+                                            {% if track.platforms.vk %}
+                                            <a href="{{ track.platforms.vk }}" target="_blank" class="platform-button vk">
+                                                <img src="/static/icons/vk-social-network-logo.png" alt="VK">
+                                                <span class="platform-button-text">VK</span>
+                                            </a>
+                                            {% endif %}
+
+                                            {% if track.platforms.yandex_music %}
+                                            <a href="{{ track.platforms.yandex_music }}" target="_blank" class="platform-button yandex_music">
+                                                <img src="/static/icons/yandex.png" alt="Яндекс Музыка">
+                                                <span class="platform-button-text">Яндекс Музыка</span>
+                                            </a>
+                                            {% endif %}
+
+                                            {% if track.platforms.spotify %}
+                                            <a href="{{ track.platforms.spotify }}" target="_blank" class="platform-button spotify">
+                                                <img src="/static/icons/spotify.png" alt="Spotify">
+                                                <span class="platform-button-text">Spotify</span>
+                                            </a>
+                                            {% endif %}
+
+                                            {% if track.platforms.apple_music %}
+                                            <a href="{{ track.platforms.apple_music }}" target="_blank" class="platform-button apple_music">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+                                                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-1.02.65.03 2.47.26 3.64 1.96-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                                                </svg>
+                                                <span class="platform-button-text">Apple Music</span>
+                                            </a>
+                                            {% endif %}
+
+                                            {% if track.platforms.youtube_music %}
+                                            <a href="{{ track.platforms.youtube_music }}" target="_blank" class="platform-button youtube_music">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+                                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                                </svg>
+                                                <span class="platform-button-text">YouTube Music</span>
+                                            </a>
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div class="social-icons">
+                    {% if global_platforms.telegram_channel %}
+                    <a href="{{ global_platforms.telegram_channel }}" target="_blank" class="social-icon" title="Telegram">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161l-1.89 8.9c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.12l-6.87 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.941z"/>
+                        </svg>
+                    </a>
+                    {% else %}
+                    <a href="#" class="social-icon" title="Telegram">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161l-1.89 8.9c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.12l-6.87 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.941z"/>
+                        </svg>
+                    </a>
+                    {% endif %}
+                    {% if global_platforms.vk %}
+                    <a href="{{ global_platforms.vk }}" target="_blank" class="social-icon" title="VK">
+                        <img src="/static/icons/vk-social-network-logo.png" alt="VK" style="width: 24px; height: 24px; filter: brightness(0) invert(1);">
+                    </a>
+                    {% else %}
+                    <a href="#" class="social-icon" title="VK">
+                        <img src="/static/icons/vk-social-network-logo.png" alt="VK" style="width: 24px; height: 24px; filter: brightness(0) invert(1);">
+                    </a>
+                    {% endif %}
+                    {% if global_platforms.twitch %}
+                    <a href="{{ global_platforms.twitch }}" target="_blank" class="social-icon" title="Twitch">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>
+                        </svg>
+                    </a>
+                    {% else %}
+                    <a href="#" class="social-icon" title="Twitch">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>
+                        </svg>
+                    </a>
+                    {% endif %}
+                    {% if global_platforms.youtube %}
+                    <a href="{{ global_platforms.youtube }}" target="_blank" class="social-icon" title="YouTube">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
+                    {% else %}
+                    <a href="#" class="social-icon" title="YouTube">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
