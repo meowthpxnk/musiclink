@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: musiclink
     ports:
-      - "8000:8000"
+      - "9911:8000"
     volumes:
       # Монтируем папку tracks, чтобы можно было добавлять треки без пересборки
       - ./tracks:/app/tracks
