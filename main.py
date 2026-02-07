@@ -256,7 +256,7 @@ async def api_create_track(
     new_track = {
         "id": track_id,
         "title": title,
-        "enabled": True,
+        "enabled": False,
         "platforms": {
             "vk": vk,
             "yandex_music": yandex_music,
