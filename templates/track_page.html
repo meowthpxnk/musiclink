@@ -275,12 +275,27 @@
             color: #fff;
         }
 
+        .back-to-list-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 400;
+            transition: color 0.2s ease;
+            pointer-events: auto;
+        }
+
+        .back-to-list-link:hover {
+            color: #fff;
+        }
+
         .footer {
             position: relative;
-            padding: 40px 20px;
+            padding: 30px 20px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            gap: 20px;
             pointer-events: none;
         }
 
@@ -435,6 +450,7 @@
             </div>
 
             <div class="footer">
+                <a href="/" class="back-to-list-link"><- Все треки</a>
                 <div class="social-icons">
                     {% if global_platforms.telegram_channel %}
                     <a href="{{ global_platforms.telegram_channel }}" target="_blank" class="social-icon" title="Telegram">
