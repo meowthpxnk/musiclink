@@ -2,7 +2,7 @@
 <html lang="ru" class="theme-toneden">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{{ track.title }} - {{ track.artist }}</title>
     <meta property="og:title" content="{{ track.title }}">
     <meta property="og:description" content="{{ track.description or track.title }}">
@@ -18,6 +18,11 @@
             box-sizing: border-box;
         }
 
+        html {
+            background: #000;
+            height: 100%;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
@@ -26,12 +31,17 @@
             font-weight: 400;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            background: #000;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
         }
 
         .link-view {
             position: relative;
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             width: 100%;
+            background: #000;
         }
 
         .link-wrap-bg-layer {
@@ -342,6 +352,14 @@
         }
 
         @media (max-width: 600px) {
+            html {
+                height: -webkit-fill-available;
+            }
+
+            body {
+                min-height: -webkit-fill-available;
+            }
+
             .link-cover-wrap {
                 padding: 0;
             }
@@ -360,6 +378,10 @@
 
             .link-artist {
                 font-size: 1rem;
+            }
+
+            .footer {
+                padding-bottom: calc(40px + env(safe-area-inset-bottom));
             }
         }
     </style>
