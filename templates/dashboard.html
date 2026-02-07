@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ru" class="theme-toneden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Админ панель - MP2000MUSIC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            background: #000;
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: #000;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+        }
+
+        /* Убираем скроллбары */
+        * {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE и Edge */
+        }
+
+        *::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .link-view {
+            position: relative;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            width: 100%;
+            background: #000;
+        }
+
+        .link-wrap-bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .link-wrap-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            filter: blur(20px);
+            transform: scale(1.1);
+        }
+
+        .link-wrap-bg-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .link-wrap {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .admin-section {
+            background: rgba(20, 20, 20, 0.9);
+            border-radius: 0;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0;
+            color: #fff;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        input[type="file"] {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 0;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-danger {
+            background: rgba(220, 53, 69, 0.2);
+            color: #fff;
+            border: 1px solid rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-danger:hover {
+            background: rgba(220, 53, 69, 0.3);
+        }
+
+        .tracks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .track-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .track-item-cover {
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .track-item-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .track-item-cover-placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.5rem;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .track-item-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .track-item-title {
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-item-id {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
+        .track-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .btn-icon-edit {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-icon-edit:hover {
+            background: rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-icon-delete {
+            background: rgba(220, 53, 69, 0.2);
+            border-color: rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-icon-delete:hover {
+            background: rgba(220, 53, 69, 0.3);
+            border-color: rgba(220, 53, 69, 0.5);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+            margin: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 44px;
+            height: 24px;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #fff;
+            transition: 0.3s;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: rgba(40, 167, 69, 0.5);
+            border-color: rgba(40, 167, 69, 0.7);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translate(20px, -50%);
+        }
+
+        .message {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 15px 20px;
+            border-radius: 0;
+            display: none;
+            z-index: 2000;
+            min-width: 250px;
+            max-width: 400px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            animation: slideInUp 0.3s ease;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .message.success {
+            background: rgba(40, 167, 69, 0.9);
+            border: 1px solid rgba(40, 167, 69, 0.6);
+            color: #fff;
+        }
+
+        .message.error {
+            background: rgba(220, 53, 69, 0.9);
+            border: 1px solid rgba(220, 53, 69, 0.6);
+            color: #fff;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #fff;
+        }
+
+        .add-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .add-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal::-webkit-scrollbar {
+            display: none;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .delete-modal {
+            max-width: 400px;
+        }
+
+        .delete-modal-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .delete-track-name {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .admin-section {
+                padding: 20px;
+            }
+
+            .track-item {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .track-item-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .track-item-actions {
+                margin-left: auto;
+            }
+
+            .btn-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+
+            .message {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                max-width: none;
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body class="theme-toneden">
+    <div class="link-view">
+        <div class="link-wrap-bg-layer">
+            <div class="link-wrap-bg">
+                <div class="link-wrap-bg-top"></div>
+            </div>
+        </div>
+
+        <div class="link-wrap">
+            <div class="container">
+                <h1>Админ панель</h1>
+
+                <div class="admin-section">
+                    <h2 class="section-title">Существующие треки</h2>
+                    <div class="tracks-list" id="tracks-list">
+                        {% for track in tracks %}
+                        <div class="track-item" data-track-id="{{ track.id }}">
+                            <div class="track-item-cover">
+                                {% if track.has_cover and track.cover_url %}
+                                <img src="{{ track.cover_url }}" alt="{{ track.title }}" onerror="this.parentElement.innerHTML='<div class=\'track-item-cover-placeholder\'>♪</div>'">
+                                {% else %}
+                                <div class="track-item-cover-placeholder">♪</div>
+                                {% endif %}
+                            </div>
+                            <div class="track-item-info">
+                                <div class="track-item-title">{{ track.title }}</div>
+                                <div class="track-item-id">ID: {{ track.id }}</div>
+                            </div>
+                            <div class="track-item-actions">
+                                <label class="toggle-switch" title="{{ 'Выключить трек' if track.get('enabled', True) else 'Включить трек' }}">
+                                    <input type="checkbox" {% if track.get('enabled', True) %}checked{% endif %} onchange="toggleTrack('{{ track.id }}', this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <button class="btn-icon btn-icon-edit" onclick="openModal('{{ track.id }}')" title="Редактировать">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                </button>
+                                <button class="btn-icon btn-icon-delete" onclick="deleteTrack('{{ track.id }}')" title="Удалить">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="add-button" onclick="openModal()">+</button>
+
+        <!-- Модальное окно подтверждения удаления -->
+        <div class="modal-overlay" id="delete-modal-overlay" onclick="closeDeleteModalOnOverlay(event)">
+            <div class="modal delete-modal" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h2 class="modal-title">Удалить трек?</h2>
+                    <button class="modal-close" onclick="closeDeleteModal()">×</button>
+                </div>
+                <div class="delete-modal-text">
+                    Вы уверены, что хотите удалить трек <span class="delete-track-name" id="delete-track-name"></span>?
+                    <br><br>
+                    Это действие нельзя отменить.
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-danger" id="confirm-delete-btn">Удалить</button>
+                    <button type="button" class="btn btn-primary" onclick="closeDeleteModal()">Отмена</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
+            <div class="modal" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modal-title">Добавить новый трек</h2>
+                    <button class="modal-close" onclick="closeModal()">×</button>
+                </div>
+                <form id="add-track-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="track_id">ID трека (латиница, без пробелов):</label>
+                        <input type="text" id="track_id" name="track_id" required>
+                        <input type="hidden" id="track_id_new" name="track_id_new">
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Название трека:</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="vk">VK:</label>
+                        <input type="text" id="vk" name="vk">
+                    </div>
+                    <div class="form-group">
+                        <label for="yandex_music">Яндекс Музыка:</label>
+                        <input type="text" id="yandex_music" name="yandex_music">
+                    </div>
+                    <div class="form-group">
+                        <label for="spotify">Spotify:</label>
+                        <input type="text" id="spotify" name="spotify">
+                    </div>
+                    <div class="form-group">
+                        <label for="apple_music">Apple Music:</label>
+                        <input type="text" id="apple_music" name="apple_music">
+                    </div>
+                    <div class="form-group">
+                        <label for="youtube_music">YouTube Music:</label>
+                        <input type="text" id="youtube_music" name="youtube_music">
+                    </div>
+                    <div class="form-group">
+                        <label for="cover_file">Обложка (PNG, JPG, WEBP):</label>
+                        <input type="file" id="cover_file" name="cover_file" accept=".png,.jpg,.jpeg,.webp,.PNG,.JPG,.JPEG,.WEBP">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" class="btn btn-primary" id="submit-btn">Добавить трек</button>
+                        <button type="button" class="btn btn-primary" onclick="closeModal()">Отмена</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEditTrackId = null;
+
+        function openModal(trackId = null) {
+            const modal = document.getElementById('modal-overlay');
+            const form = document.getElementById('add-track-form');
+            const title = document.getElementById('modal-title');
+            const submitBtn = document.getElementById('submit-btn');
+
+            if (trackId) {
+                title.textContent = 'Редактировать трек';
+                submitBtn.textContent = 'Сохранить изменения';
+                currentEditTrackId = trackId;
+                editTrack(trackId);
+            } else {
+                title.textContent = 'Добавить новый трек';
+                submitBtn.textContent = 'Добавить трек';
+                currentEditTrackId = null;
+                form.reset();
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal-overlay');
+            const form = document.getElementById('add-track-form');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            form.reset();
+            currentEditTrackId = null;
+        }
+
+        function closeModalOnOverlay(event) {
+            if (event.target.id === 'modal-overlay') {
+                closeModal();
+            }
+        }
+
+        function showMessage(text, type = 'success') {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'block';
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 3000);
+        }
+
+        document.getElementById('add-track-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            // Для редактирования добавляем новый ID в скрытое поле
+            if (currentEditTrackId) {
+                const trackIdInput = document.getElementById('track_id');
+                const newTrackId = trackIdInput.value.trim();
+
+                if (!newTrackId) {
+                    showMessage('ID трека не может быть пустым', 'error');
+                    return;
+                }
+
+                // Убеждаемся, что поле доступно
+                trackIdInput.disabled = false;
+                trackIdInput.readOnly = false;
+
+                // Устанавливаем новое значение в скрытое поле и formData
+                const trackIdNewInput = document.getElementById('track_id_new');
+                trackIdNewInput.value = newTrackId;
+                formData.set('track_id_new', newTrackId);
+
+                console.log('Updating track:', currentEditTrackId, 'to new ID:', newTrackId);
+            }
+
+            try {
+                let response;
+                if (currentEditTrackId) {
+                    // Редактирование
+                    response = await fetch(`/api/tracks/${currentEditTrackId}`, {
+                        method: 'PUT',
+                        body: formData
+                    });
+                } else {
+                    // Создание
+                    response = await fetch('/api/tracks', {
+                        method: 'POST',
+                        body: formData
+                    });
+                }
+
+                if (response.ok) {
+                    showMessage(currentEditTrackId ? 'Трек успешно обновлен!' : 'Трек успешно добавлен!', 'success');
+                    closeModal();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    const error = await response.json();
+                    showMessage(error.detail || 'Ошибка при сохранении трека', 'error');
+                    console.error('Error response:', error);
+                }
+            } catch (error) {
+                showMessage('Ошибка при сохранении трека', 'error');
+                console.error('Error:', error);
+            }
+        });
+
+        let trackToDelete = null;
+
+        function openDeleteModal(trackId, trackTitle) {
+            trackToDelete = trackId;
+            document.getElementById('delete-track-name').textContent = `"${trackTitle}" (ID: ${trackId})`;
+            document.getElementById('delete-modal-overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+            trackToDelete = null;
+        }
+
+        function closeDeleteModalOnOverlay(event) {
+            if (event.target.id === 'delete-modal-overlay') {
+                closeDeleteModal();
+            }
+        }
+
+        document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+            if (!trackToDelete) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/tracks/${trackToDelete}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showMessage('Трек успешно удален!', 'success');
+                    closeDeleteModal();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showMessage('Ошибка при удалении трека', 'error');
+                }
+            } catch (error) {
+                showMessage('Ошибка при удалении трека', 'error');
+                console.error('Error:', error);
+            }
+        });
+
+        // Закрытие по Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const deleteModal = document.getElementById('delete-modal-overlay');
+                if (deleteModal.classList.contains('active')) {
+                    closeDeleteModal();
+                }
+            }
+        });
+
+        async function toggleTrack(trackId, enabled) {
+            try {
+                const formData = new FormData();
+                formData.append('enabled', enabled);
+
+                const response = await fetch(`/api/tracks/${trackId}/toggle`, {
+                    method: 'PATCH',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    showMessage(enabled ? 'Трек включен' : 'Трек выключен', 'success');
+                } else {
+                    const error = await response.json();
+                    showMessage(error.detail || 'Ошибка при изменении статуса трека', 'error');
+                    // Откатываем состояние toggle
+                    const checkbox = document.querySelector(`input[onchange*="${trackId}"]`);
+                    if (checkbox) {
+                        checkbox.checked = !enabled;
+                    }
+                }
+            } catch (error) {
+                showMessage('Ошибка при изменении статуса трека', 'error');
+                console.error('Error:', error);
+                // Откатываем состояние toggle
+                const checkbox = document.querySelector(`input[onchange*="${trackId}"]`);
+                if (checkbox) {
+                    checkbox.checked = !enabled;
+                }
+            }
+        }
+
+        async function deleteTrack(trackId) {
+            // Получаем название трека для отображения
+            try {
+                const response = await fetch(`/api/tracks/${trackId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const track = data.track;
+                    openDeleteModal(trackId, track.title || trackId);
+                } else {
+                    // Если не удалось загрузить, показываем только ID
+                    openDeleteModal(trackId, trackId);
+                }
+            } catch (error) {
+                openDeleteModal(trackId, trackId);
+            }
+        }
+
+        async function editTrack(trackId) {
+            try {
+                const response = await fetch(`/api/tracks/${trackId}`);
+                if (!response.ok) {
+                    showMessage('Трек не найден', 'error');
+                    return;
+                }
+
+                const data = await response.json();
+                const track = data.track;
+
+                // Заполняем форму
+                const trackIdInput = document.getElementById('track_id');
+                trackIdInput.value = track.id;
+                trackIdInput.disabled = false; // Убеждаемся, что поле доступно для редактирования
+                trackIdInput.readOnly = false;
+
+                document.getElementById('title').value = track.title;
+                document.getElementById('vk').value = track.platforms?.vk || '';
+                document.getElementById('yandex_music').value = track.platforms?.yandex_music || '';
+                document.getElementById('spotify').value = track.platforms?.spotify || '';
+                document.getElementById('apple_music').value = track.platforms?.apple_music || '';
+                document.getElementById('youtube_music').value = track.platforms?.youtube_music || '';
+            } catch (error) {
+                showMessage('Ошибка при загрузке трека', 'error');
+                console.error('Error loading track:', error);
+            }
+        }
+    </script>
+    <div id="message" class="message"></div>
+</body>
+</html>

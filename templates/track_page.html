@@ -67,7 +67,7 @@
         }
 
         .link-wrap-bg.no-cover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
         }
 
         .link-wrap-bg-top {
@@ -423,6 +423,8 @@
                                     </div>
 
                                     <div class="link-actions">
+                                        {% set has_platforms = track.platforms.vk or track.platforms.yandex_music or track.platforms.spotify or track.platforms.apple_music or track.platforms.youtube_music %}
+                                        {% if has_platforms %}
                                         <div class="platform-buttons">
                                             {% if track.platforms.vk %}
                                             <a href="{{ track.platforms.vk }}" target="_blank" class="platform-button vk">
@@ -463,6 +465,7 @@
                                             </a>
                                             {% endif %}
                                         </div>
+                                        {% endif %}
 
                                     </div>
                                 </div>
